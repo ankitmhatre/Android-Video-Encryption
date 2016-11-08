@@ -1,4 +1,7 @@
-package com.iambedant.nanodegree.videoencrypt;
+package com.iambedant.xcript;
+
+import android.net.Uri;
+import android.util.Base64;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +24,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Created by Kuliza-193 on 3/18/2016.
+ * Created by @iamBedant on 08/11/16.
  */
 public class Encrypter {
 
@@ -36,7 +39,7 @@ public class Encrypter {
     //private final static String ALGO_VIDEO_ENCRYPTOR = "AES";
 
     @SuppressWarnings("resource")
-    public static void encrypt(SecretKey key, AlgorithmParameterSpec paramSpec, InputStream in, OutputStream out)
+    private void encrypt(SecretKey key, AlgorithmParameterSpec paramSpec, InputStream in, OutputStream out)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
             InvalidAlgorithmParameterException, IOException {
         try {
@@ -54,14 +57,11 @@ public class Encrypter {
     }
 
     @SuppressWarnings("resource")
-    public static void decrypt(SecretKey key, AlgorithmParameterSpec paramSpec, InputStream in, OutputStream out)
+    private void decrypt(SecretKey key, AlgorithmParameterSpec paramSpec, InputStream in, OutputStream out)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
             InvalidAlgorithmParameterException, IOException {
         try {
-            // byte[] iv = new byte[] { (byte) 0x8E, 0x12, 0x39, (byte) 0x9C,
-            // 0x07, 0x72, 0x6F, 0x5A, (byte) 0x8E, 0x12, 0x39, (byte) 0x9C,
-            // 0x07, 0x72, 0x6F, 0x5A };
-            // AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
+
             Cipher c = Cipher.getInstance(ALGO_VIDEO_ENCRYPTOR);
             c.init(Cipher.DECRYPT_MODE, key, paramSpec);
             out = new CipherOutputStream(out, c);
@@ -75,13 +75,18 @@ public class Encrypter {
         }
     }
 
-    public static void main(String[] args) {
-        File inFile = new File("Firebase.mp4");
-        File outFile = new File("enc_Firebase.mp4");
-        File outFile_dec = new File("dec_Firebase.mp4");
+
+    public String encryptFile(Uri uri, Uri encrypted) {
+
+        File inFile = new File(uri.getPath());
+        String sKey = "";
+        File outFile = new File(encrypted.getPath());
 
         try {
             SecretKey key = KeyGenerator.getInstance(ALGO_SECRET_KEY_GENERATOR).generateKey();
+            sKey = key.toString();
+
+            sKey = Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
 
             byte[] keyData = key.getEncoded();
             SecretKey key2 = new SecretKeySpec(keyData, 0, keyData.length, ALGO_SECRET_KEY_GENERATOR); //if you want to store key bytes to db so its just how to //recreate back key from bytes array
@@ -92,12 +97,40 @@ public class Encrypter {
             // separately
             AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
 
-            Encrypter.encrypt(key, paramSpec, new FileInputStream(inFile), new FileOutputStream(outFile));
-            Encrypter.decrypt(key2, paramSpec, new FileInputStream(outFile), new FileOutputStream(outFile_dec));
+            encrypt(key, paramSpec, new FileInputStream(inFile), new FileOutputStream(outFile));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return sKey;
+
     }
 
+
+    public void decryptFile(Uri uri, Uri uriOut, String secretKey) {
+
+        File inFile = new File(uri.getPath());
+        File outFile = new File(uri.getPath());
+
+        byte[] encodedKey = Base64.decode(secretKey, Base64.DEFAULT);
+        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+
+        try {
+
+            byte[] keyData = key.getEncoded();
+            SecretKey key2 = new SecretKeySpec(keyData, 0, keyData.length, ALGO_SECRET_KEY_GENERATOR); //if you want to store key bytes to db so its just how to //recreate back key from bytes array
+
+            byte[] iv = new byte[IV_LENGTH];
+            SecureRandom.getInstance(ALGO_RANDOM_NUM_GENERATOR).nextBytes(iv); // If
+            // storing
+            // separately
+            AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
+
+            decrypt(key2, paramSpec, new FileInputStream(outFile), new FileOutputStream(outFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
 }

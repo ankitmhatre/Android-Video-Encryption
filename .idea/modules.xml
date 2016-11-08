@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/VideoEncrypt.iml" filepath="$PROJECT_DIR$/VideoEncrypt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Android-Video-Encryption.iml" filepath="$PROJECT_DIR$/Android-Video-Encryption.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xcript/xcript.iml" filepath="$PROJECT_DIR$/xcript/xcript.iml" />
     </modules>
   </component>
 </project>
