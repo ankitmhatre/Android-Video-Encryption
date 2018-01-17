@@ -1,6 +1,8 @@
 package com.iambedant.xcript;
 
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Base64;
 
 import java.io.File;
@@ -76,9 +78,9 @@ public class Encrypter {
     }
 
 
-    public String encryptFile(Uri uri, Uri encrypted) {
+    public String encryptFile(String path, Uri encrypted) {
 
-        File inFile = new File(uri.getPath());
+        File inFile = new File(path);
         String sKey = "";
         File outFile = new File(encrypted.getPath());
 
@@ -96,7 +98,6 @@ public class Encrypter {
             // storing
             // separately
             AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
-
             encrypt(key, paramSpec, new FileInputStream(inFile), new FileOutputStream(outFile));
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,10 +108,10 @@ public class Encrypter {
     }
 
 
-    public void decryptFile(Uri uri, Uri uriOut, String secretKey) {
+    public void decryptFile(Uri uri, String uriOut, String secretKey) {
 
         File inFile = new File(uri.getPath());
-        File outFile = new File(uri.getPath());
+        File outFile = new File(uriOut);
 
         byte[] encodedKey = Base64.decode(secretKey, Base64.DEFAULT);
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
@@ -126,7 +127,7 @@ public class Encrypter {
             // separately
             AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
 
-            decrypt(key2, paramSpec, new FileInputStream(outFile), new FileOutputStream(outFile));
+            decrypt(key2, paramSpec, new FileInputStream(inFile), new FileOutputStream(outFile));
         } catch (Exception e) {
             e.printStackTrace();
         }
