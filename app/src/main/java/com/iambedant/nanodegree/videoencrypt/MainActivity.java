@@ -17,11 +17,12 @@ import android.widget.Button;
 import com.iambedant.xcript.Encrypter;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 11;
-    Encrypter encrypter = new Encrypter();
+    Encrypter encrypter ;
 
 
     @Override
@@ -29,7 +30,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        try {
+            init();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         Button encryptVideo = (Button) findViewById(R.id.encryptVideo);
         Button decryptVideo = (Button) findViewById(R.id.decryptVideo);
 
@@ -44,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         decryptVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri storeUri = Uri.parse("file:///storage/emulated/0/video%253A5558");
+                Uri storeUri = Uri.parse("file:///storage/emulated/0/DCIM/Camera/enc_v.swf");
                 File out = new File(outputPath);
                 if (out.exists()) {
                     out.delete();
@@ -52,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
                 encrypter.decryptFile(storeUri, outputPath, key);
             }
         });
+
+    }
+
+    private void init() throws NoSuchAlgorithmException {
+        encrypter =new Encrypter();
     }
 
 
@@ -59,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent i = new Intent(
                 Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         );
         startActivityForResult(i, REQUEST_TAKE_GALLERY_VIDEO);
     }
@@ -72,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
 
                 Uri selectedUri = data.getData();
-                Uri storeUri = Uri.parse("file:///storage/emulated/0/video%253A5558");
+                Uri storeUri = Uri.parse("file:///storage/emulated/0/DCIM/Camera/enc_v.swf");
                 outputPath = mf_szGetRealPathFromURI(selectedUri);
-                key = encrypter.encryptFile(mf_szGetRealPathFromURI(selectedUri), storeUri);
+                key = encrypter.encryptFile(outputPath, storeUri);
             }
         }
     }
@@ -85,9 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor cursor = null;
         try {
-            String[] proj = {MediaStore.Images.Media.DATA};
+            String[] proj = {MediaStore.Video.Media.DATA};
             cursor = getContentResolver().query(ac_Uri, proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
             cursor.moveToFirst();
             result = cursor.getString(column_index);
             isok = true;
