@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Android-Android-Video-Encryption.iml" filepath="$PROJECT_DIR$/.idea/modules/Android-Android-Video-Encryption.iml" group="Android-Video-Encryption" />
       <module fileurl="file://$PROJECT_DIR$/Android-Video-Encryption.iml" filepath="$PROJECT_DIR$/Android-Video-Encryption.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-Video-Encryption-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-Video-Encryption-app.iml" group="Android-Video-Encryption/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xcript/Android-Video-Encryption-xcript.iml" filepath="$PROJECT_DIR$/.idea/modules/xcript/Android-Video-Encryption-xcript.iml" group="Android-Video-Encryption/xcript" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/xcript/xcript.iml" filepath="$PROJECT_DIR$/xcript/xcript.iml" />
     </modules>
